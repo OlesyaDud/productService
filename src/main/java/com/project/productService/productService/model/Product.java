@@ -12,6 +12,7 @@ public class Product {
 	String prodName;
 	int depId;
 	String depName;
+	
 	public int getproductId() {
 		return productId;
 	}

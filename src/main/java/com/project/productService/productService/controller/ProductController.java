@@ -2,7 +2,9 @@ package com.project.productService.productService.controller;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import com.project.productService.productService.services.ProductService;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/products")
 public class ProductController {
+
 	
 	@Autowired
 	private ProductService pServ;
@@ -28,6 +31,8 @@ public class ProductController {
 		super();
 		this.pServ = productService;
 	}
+	
+
 	
 //	post
 	
@@ -42,9 +47,7 @@ public class ProductController {
 		return pServ.saveProducts(p);
 	}
 
-	
-//	get
-	
+//	get	
 	@GetMapping
 	public List<Product> findAllProducts() {
 		return pServ.getProducts();
