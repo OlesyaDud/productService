@@ -8,9 +8,16 @@ import javax.persistence.*;
 public class Product {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int productId;
+	
+	@Column(name = "prod_name")
 	String prodName;
+	
+	@Column(name = "dep_id")
 	int depId;
+	
+	@Column(name = "dep_name")
 	String depName;
 	
 	public int getproductId() {
