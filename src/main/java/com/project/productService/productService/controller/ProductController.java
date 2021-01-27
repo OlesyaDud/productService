@@ -3,17 +3,12 @@ package com.project.productService.productService.controller;
 import java.util.List;
 
 
+import com.project.productService.productService.exception.ProductNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.productService.productService.model.Product;
 import com.project.productService.productService.services.ProductService;
@@ -31,11 +26,8 @@ public class ProductController {
 		super();
 		this.pServ = productService;
 	}
-	
 
-	
 //	post
-	
 	@PostMapping("/addProduct")
 	public Product addProduct(@RequestBody Product p) {
 		return pServ.saveProduct(p);
@@ -49,28 +41,44 @@ public class ProductController {
 
 //	get	
 	@GetMapping
-	public List<Product> findAllProducts() {
-		return pServ.getProducts();
+	public ResponseEntity<List<Product>> findAllProducts() {
+		return  new ResponseEntity<>(pServ.getProducts(), HttpStatus.OK);
 	}
-	
-	@GetMapping("/{prodId}")
-	public Product findProdById(@PathVariable int prodId) {
-		return pServ.findByProdId(prodId);
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Product>findByProdId(@PathVariable("id") String id) {
+		try {
+			return new ResponseEntity<>(pServ.findByProdId(id), HttpStatus.OK);
+		} catch ( ProductNotFound e) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
 	}
-	
+
 //	put
-	@PutMapping
-	public Product updateProduct(@RequestBody Product p) {
-		return pServ.updateProduct(p);
+	@PutMapping("/{id}")
+	public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @RequestBody Product p) {
+		return new ResponseEntity<>(pServ.updateProduct(id, p), HttpStatus.CREATED);
 	}
+
+	//patch
+	@PatchMapping("/{id}")
+	public ResponseEntity<Product> patchPerson(@PathVariable("id") String id, @RequestBody Product p) {
+		try {
+			return new ResponseEntity<>(pServ.patchProduct(id, p), HttpStatus.OK);
+		} catch (ProductNotFound e) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+	}
+
 	
 //	delete
-	@DeleteMapping("{prodId}")
-	public String deleteProduct(@PathVariable int prodId) {
-		return pServ.deleteProduct(prodId);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Product> deleteProduct(@PathVariable("id") String id) {
+		try {
+			pServ.deleteProduct(id);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}catch (ProductNotFound e) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
 	}
-	
-	
-
-
 }
